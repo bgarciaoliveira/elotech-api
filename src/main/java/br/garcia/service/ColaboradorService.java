@@ -16,9 +16,7 @@ public class ColaboradorService {
     @Autowired
     protected ColaboradorRepository colaboradorRepository;
 
-    public Colaborador create(Colaborador colaborador) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-
-        colaborador.setSenha(HashLibrary.passwordHash(colaborador.getSenha()));
+    public Colaborador create(Colaborador colaborador)  {
 
         return colaboradorRepository.save(colaborador);
     }
@@ -32,9 +30,28 @@ public class ColaboradorService {
         return colaboradorRepository.findOne(id);
     }
 
-    public Boolean update(Colaborador colaborador){
+    public boolean updateNome(Long id, String nome){
 
-        if(colaboradorRepository.exists(colaborador.getId())){
+        if(colaboradorRepository.exists(id)){
+            Colaborador colaborador = colaboradorRepository.findOne(id);
+
+            colaborador.setNome(nome);
+
+            colaboradorRepository.save(colaborador);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean updateEmail(Long id, String email){
+
+        if(colaboradorRepository.exists(id)){
+            Colaborador colaborador = colaboradorRepository.findOne(id);
+
+            colaborador.setEmail(email);
+
             colaboradorRepository.save(colaborador);
 
             return true;
@@ -53,7 +70,7 @@ public class ColaboradorService {
         return false;
     }
 
-    public Long auth(String email, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public long auth(String email, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
         List<Colaborador> res = colaboradorRepository.findByEmailAndSenha(email, HashLibrary.passwordHash(password));
 
@@ -61,6 +78,6 @@ public class ColaboradorService {
             return res.get(0).getId();
         }
 
-        return Long.valueOf(-1);
+        return -1;
     }
 }

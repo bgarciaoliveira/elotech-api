@@ -2,6 +2,7 @@ package br.garcia.resource;
 
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
+import br.garcia.util.Validator;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.xml.ws.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
@@ -20,8 +23,6 @@ import java.util.List;
         value = ColaboradorResource.URI_RESOURCE,
         produces = {MediaType.APPLICATION_JSON_VALUE}
 )
-
-@CrossOrigin
 public class ColaboradorResource {
 
     protected static final String URI_RESOURCE = "/api/colaboradores";
@@ -30,60 +31,116 @@ public class ColaboradorResource {
     private ColaboradorService colaboradorService;
 
     @PostMapping
-    public ResponseEntity create(@RequestBody Colaborador colaborador) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public ResponseEntity create(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-        Colaborador serviceResponse = colaboradorService.create(colaborador);
+        JSONObject jsonObj = new JSONObject(json);
 
-        if(serviceResponse == null){
-            return ResponseEntity.badRequest().build();
+        // validação campos obrigatórios
+        if (!jsonObj.isEmpty() && jsonObj.has("cpf") && jsonObj.has("email") && jsonObj.has("senha") && jsonObj.has("nome")) {
+
+            String cpf = jsonObj.getString("cpf");
+            String email = jsonObj.getString("email");
+            String senha = jsonObj.getString("senha");
+            String nome = jsonObj.getString("nome");
+
+            if (Validator.checkCpf(cpf) && Validator.checkEmail(email) && Validator.checkNome(nome) && Validator.checkSenha(senha)) {
+                Colaborador colaborador = new Colaborador();
+
+                colaborador.setCpf(cpf);
+                colaborador.setEmail(email);
+                colaborador.setSenha(senha);
+                colaborador.setNome(nome);
+
+                Colaborador serviceResponse = colaboradorService.create(colaborador);
+
+                if (serviceResponse != null && serviceResponse.getId() != 0) {
+                    JSONObject response = new JSONObject();
+
+                    response.put("id", colaborador.getId());
+
+                    return ResponseEntity
+                            .created(URI.create(String.format("%s/%s", ColaboradorResource.URI_RESOURCE, serviceResponse.getId())))
+                            .body(response.toString());
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+            }
         }
 
-        return ResponseEntity
-                .created(URI.create(String.format("%s/%s", ColaboradorResource.URI_RESOURCE, serviceResponse.getId())))
-                .body(serviceResponse);
-
+        return ResponseEntity.badRequest().build();
     }
 
     @RequestMapping
-    public ResponseEntity getAll(){
+    public ResponseEntity getAll() {
         List<Colaborador> colaboradores = colaboradorService.getAll();
 
-        if(colaboradores.isEmpty()){
-            return ResponseEntity.notFound().build();
+        if (!colaboradores.isEmpty()) {
+            return ResponseEntity.ok(colaboradores);
         }
 
-        return ResponseEntity.ok(colaboradores);
+        return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "/{id}")
-    public ResponseEntity getById(@PathVariable Long id){
+    public ResponseEntity getById(@PathVariable Long id) {
         Colaborador colaborador = colaboradorService.getById(id);
 
-        if(colaborador == null){
-            return ResponseEntity.notFound().build();
+        if (colaborador != null) {
+            return ResponseEntity.ok(colaborador);
         }
 
-        return ResponseEntity.ok(colaborador);
+        return ResponseEntity.notFound().build();
     }
 
-    @PutMapping
-    public ResponseEntity update(@RequestBody Colaborador colaborador){
+    @PutMapping(value = "/updateNome")
+    public ResponseEntity updateNome(@RequestBody String json) {
+        JSONObject jsonObj = new JSONObject(json);
 
-        if(!colaboradorService.update(colaborador)){
-            return ResponseEntity.notFound().build();
+        if (!jsonObj.isEmpty()) {
+            long id = jsonObj.getLong("id");
+            String nome = jsonObj.getString("nome");
+
+            if (id > 0 && Validator.checkNome(nome)) {
+                boolean serviceResponse = colaboradorService.updateNome(id, nome);
+
+                if (serviceResponse) {
+                    return ResponseEntity.noContent().build();
+                }
+            }
         }
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.badRequest().build();
     }
 
-    @DeleteMapping(value="/{id}")
-    public ResponseEntity delete(@PathVariable Long id){
+    @PutMapping(value = "/updateEmail")
+    public ResponseEntity updateEmail(@RequestBody String json) {
+        JSONObject jsonObj = new JSONObject();
 
-        if(!colaboradorService.delete(id)){
-            return ResponseEntity.notFound().build();
+        if (!jsonObj.isEmpty()) {
+
+            long id = jsonObj.getLong("id");
+            String email = jsonObj.getString("email");
+
+            if (id > 0 && Validator.checkEmail(email)) {
+                boolean serviceResponse = colaboradorService.updateEmail(id, email);
+
+                if (serviceResponse) {
+                    return ResponseEntity.noContent().build();
+                }
+            }
         }
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.badRequest().build();
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity delete(@PathVariable Long id) {
+
+        if (id > 0 && colaboradorService.delete(id)) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping(value = "/auth")
@@ -91,19 +148,25 @@ public class ColaboradorResource {
 
         JSONObject jsonObject = new JSONObject(json);
 
-        String email = jsonObject.get("email").toString().trim();
-        String senha = jsonObject.get("senha").toString();
+        if (!jsonObject.isEmpty()) {
+            String email = jsonObject.get("email").toString().trim();
+            String senha = jsonObject.get("senha").toString();
 
-        Long id = colaboradorService.auth(email, senha);
+            if (Validator.checkEmail(email) && Validator.checkSenha(senha)) {
+                Long id = colaboradorService.auth(email, senha);
 
-        if(id == -1){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                if (id > 0) {
+                    JSONObject response = new JSONObject();
+                    response.put("id", id);
+
+                    return ResponseEntity.ok(response.toString());
+
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
+            }
         }
 
-        JSONObject response = new JSONObject();
-        response.put("id", id);
-
-        return ResponseEntity.ok(response.toString());
+        return ResponseEntity.badRequest().build();
     }
-
 }
