@@ -35,9 +35,11 @@ public class ColaboradorService {
         if(colaboradorRepository.exists(id)){
             Colaborador colaborador = colaboradorRepository.findOne(id);
 
-            colaborador.setNome(nome);
+            if(!colaborador.getNome().equals(nome)){
+                colaborador.setNome(nome);
 
-            colaboradorRepository.save(colaborador);
+                colaboradorRepository.save(colaborador);
+            }
 
             return true;
         }
@@ -50,9 +52,11 @@ public class ColaboradorService {
         if(colaboradorRepository.exists(id)){
             Colaborador colaborador = colaboradorRepository.findOne(id);
 
-            colaborador.setEmail(email);
+            if(!colaborador.getEmail().equals(email)){
+                colaborador.setEmail(email);
 
-            colaboradorRepository.save(colaborador);
+                colaboradorRepository.save(colaborador);
+            }
 
             return true;
         }
