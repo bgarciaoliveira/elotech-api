@@ -3,15 +3,13 @@ package br.garcia.resource;
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
 import br.garcia.util.Validator;
+import org.h2.engine.Session;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityManager;
-import javax.xml.ws.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +30,6 @@ public class ColaboradorResource {
 
     @PostMapping
     public ResponseEntity create(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-
         JSONObject jsonObj = new JSONObject(json);
 
         // validação campos obrigatórios
