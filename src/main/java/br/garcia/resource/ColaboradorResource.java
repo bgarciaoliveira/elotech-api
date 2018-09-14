@@ -2,19 +2,26 @@ package br.garcia.resource;
 
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.MediaType;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
 
 @RestController
 @RequestMapping(
         value = ColaboradorResource.URI_RESOURCE,
         produces = {MediaType.APPLICATION_JSON_VALUE}
 )
+
+@CrossOrigin
 public class ColaboradorResource {
 
     protected static final String URI_RESOURCE = "/api/colaboradores";
@@ -22,8 +29,8 @@ public class ColaboradorResource {
     @Autowired
     private ColaboradorService colaboradorService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity create(@RequestBody Colaborador colaborador){
+    @PostMapping
+    public ResponseEntity create(@RequestBody Colaborador colaborador) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
         Colaborador serviceResponse = colaboradorService.create(colaborador);
 
@@ -59,7 +66,7 @@ public class ColaboradorResource {
         return ResponseEntity.ok(colaborador);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping
     public ResponseEntity update(@RequestBody Colaborador colaborador){
 
         if(!colaboradorService.update(colaborador)){
@@ -69,10 +76,7 @@ public class ColaboradorResource {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(
-            value="/{id}",
-            method = RequestMethod.DELETE
-    )
+    @DeleteMapping(value="/{id}")
     public ResponseEntity delete(@PathVariable Long id){
 
         if(!colaboradorService.delete(id)){
@@ -81,4 +85,25 @@ public class ColaboradorResource {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping(value = "/auth")
+    public ResponseEntity auth(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
+        JSONObject jsonObject = new JSONObject(json);
+
+        String email = jsonObject.get("email").toString().trim();
+        String senha = jsonObject.get("senha").toString();
+
+        Long id = colaboradorService.auth(email, senha);
+
+        if(id == -1){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        JSONObject response = new JSONObject();
+        response.put("id", id);
+
+        return ResponseEntity.ok(response.toString());
+    }
+
 }
