@@ -1,6 +1,7 @@
 package br.garcia;
 
 import br.garcia.util.HashLibrary;
+import br.garcia.util.Jwt;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

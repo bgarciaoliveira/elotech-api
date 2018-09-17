@@ -33,6 +33,16 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                 if(!uri.equals("/api/colaboradores/auth")){
                     String token = httpServletRequest.getHeader("token");
 
+
+
+
+                    tring uuuid2 = "BB2A78028923499A809B8805993CB94E";
+                    String token2 = Jwt.create(uuuid2);
+
+
+
+
+
                 }
 
                 return true;
