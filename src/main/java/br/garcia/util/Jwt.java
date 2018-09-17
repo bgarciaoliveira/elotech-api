@@ -9,11 +9,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class Jwt {
 
-    private static final String secretKey = "3gsiOM}GnWtX-w_~9`^?sYile]KTxs";
+    private static final String SECRET_KEY = "3gsiOM}GnWtX-w_~9`^?sYile]KTxs";
 
     public static String create(String id){
         try{
-            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
 
             return JWT.create()
                     .withIssuer(id)
@@ -26,7 +26,7 @@ public class Jwt {
 
     public static boolean verify(String token, String id){
         try{
-            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
 
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(id)

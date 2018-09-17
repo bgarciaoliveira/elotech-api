@@ -5,13 +5,17 @@ import java.util.regex.Pattern;
 
 public class Validator {
 
+    private Validator() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Boolean checkCpf(String cpf){
 
-        final Pattern PATTERN_GENERIC = Pattern.compile("[0-9]{3}\\.?[0-9]{3}\\.?[0-9]{3}\\-?[0-9]{2}");
-        final Pattern PATTERN_NUMBERS = Pattern.compile("(?=^((?!((([0]{11})|([1]{11})|([2]{11})|([3]{11})|([4]{11})|([5]{11})|([6]{11})|([7]{11})|([8]{11})|([9]{11})))).)*$)([0-9]{11})");
-        if (cpf != null && PATTERN_GENERIC.matcher(cpf).matches()) {
+        final Pattern patternGeneric = Pattern.compile("[0-9]{3}\\.?[0-9]{3}\\.?[0-9]{3}\\-?[0-9]{2}");
+        final Pattern patternNumbers = Pattern.compile("(?=^((?!((([0]{11})|([1]{11})|([2]{11})|([3]{11})|([4]{11})|([5]{11})|([6]{11})|([7]{11})|([8]{11})|([9]{11})))).)*$)([0-9]{11})");
+        if (cpf != null && patternGeneric.matcher(cpf).matches()) {
             cpf = cpf.replaceAll("-|\\.", "");
-            if (PATTERN_NUMBERS.matcher(cpf).matches()) {
+            if (patternNumbers.matcher(cpf).matches()) {
                 int[] numbers = new int[11];
                 for (int i = 0; i < 11; i++) numbers[i] = Character.getNumericValue(cpf.charAt(i));
                 int i;
@@ -57,6 +61,6 @@ public class Validator {
     }
 
     public static Boolean checkSenha(String senha){
-        return senha.length() >= 4 && senha.length() <= 32;
+        return senha.length() <= 32;
     }
 }

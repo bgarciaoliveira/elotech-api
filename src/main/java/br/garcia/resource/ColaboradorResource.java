@@ -3,9 +3,7 @@ package br.garcia.resource;
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
 import br.garcia.util.Jwt;
-import br.garcia.util.UUUID;
 import br.garcia.util.Validator;
-import org.h2.engine.Session;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,13 +72,17 @@ public class ColaboradorResource {
 
         JSONObject jsonObject = new JSONObject(json);
 
-        if (!jsonObject.isEmpty()) {
+        if (!jsonObject.isEmpty() && jsonObject.has("email") && jsonObject.has("senha")) {
+
             String email = jsonObject.get("email").toString().trim();
             String senha = jsonObject.get("senha").toString();
 
             if (Validator.checkEmail(email) && Validator.checkSenha(senha)) {
                 String id = colaboradorService.auth(email, senha);
                 String token = Jwt.create(id);
+
+                System.out.println(id);
+                System.out.println(token);
 
                 if (!id.equals("") && !token.equals("")) {
                     JSONObject response = new JSONObject();
@@ -127,7 +129,7 @@ public class ColaboradorResource {
     public ResponseEntity updateNome(@RequestBody String json) {
         JSONObject jsonObj = new JSONObject(json);
 
-        if (!jsonObj.isEmpty()) {
+        if (!jsonObj.isEmpty() && jsonObj.has("id") && jsonObj.has("nome")) {
             String id = jsonObj.getString("id");
             String nome = jsonObj.getString("nome");
 
@@ -147,7 +149,7 @@ public class ColaboradorResource {
     public ResponseEntity updateEmail(@RequestBody String json) {
         JSONObject jsonObj = new JSONObject();
 
-        if (!jsonObj.isEmpty()) {
+        if (!jsonObj.isEmpty() && jsonObj.has("id") && jsonObj.has("email")) {
 
             String id = jsonObj.getString("id");
             String email = jsonObj.getString("email");

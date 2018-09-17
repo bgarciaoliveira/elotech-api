@@ -1,5 +1,4 @@
 package br.garcia.util;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -7,11 +6,13 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashLibrary {
 
+    private HashLibrary() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static byte[] sha256Digest(String text) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         MessageDigest algorithm = MessageDigest.getInstance("SHA-256");
-        byte messageDigest[] = algorithm.digest(text.getBytes("UTF-8"));
-
-        return messageDigest;
+        return algorithm.digest(text.getBytes("UTF-8"));
     }
 
     public static String sha256(String text) throws UnsupportedEncodingException, NoSuchAlgorithmException {
