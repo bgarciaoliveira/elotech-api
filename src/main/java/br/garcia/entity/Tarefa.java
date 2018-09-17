@@ -35,6 +35,11 @@ public class Tarefa {
     @Size(max = 500)
     private String descricao;
 
+    @Column(name = "status")
+    @NotNull
+    @Enumerated(EnumType.ORDINAL)
+    TarefaStatus status;
+
     @ManyToOne
     @JoinColumn(name="colaborador_id")
     private Colaborador colaborador;
@@ -77,5 +82,13 @@ public class Tarefa {
 
     public void setColaborador(Colaborador colaborador) {
         this.colaborador = colaborador;
+    }
+
+    public TarefaStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TarefaStatus status) {
+        this.status = status;
     }
 }
