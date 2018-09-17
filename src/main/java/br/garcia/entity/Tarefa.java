@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
-
 @Entity
 @Table(name = "colaborador")
 public class Tarefa {
