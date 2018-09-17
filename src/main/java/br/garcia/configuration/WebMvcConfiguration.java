@@ -33,8 +33,6 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                 if(!uri.equals("/api/colaboradores/auth")){
                     String token = httpServletRequest.getHeader("token");
 
-                    
-
                 }
 
                 return true;

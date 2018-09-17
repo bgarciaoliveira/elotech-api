@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 @SpringBootApplication
 public class App {
-    public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ColaboradorRepository extends JpaRepository<Colaborador, Long> {
+public interface ColaboradorRepository extends JpaRepository<Colaborador, String> {
 
     List<Colaborador> findByEmailAndSenha(String email, String senha);
 }

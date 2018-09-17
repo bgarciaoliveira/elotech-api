@@ -1,6 +1,8 @@
 package br.garcia.entity;
 
 import br.garcia.util.HashLibrary;
+import br.garcia.util.UUUID;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,8 +17,9 @@ public class Colaborador {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue
-    private Long id;
+    @GenericGenerator(name = "client_id", strategy = "br.garcia.entity.generator.UUUIDGenerator")
+    @GeneratedValue(generator = "client_id")
+    private String id;
 
     @Column(name = "cpf", unique=true)
     @NotNull
@@ -36,12 +39,12 @@ public class Colaborador {
     @Size(min=3, max=30)
     private String nome;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void generateId() {
+        this.id = UUUID.generate();
     }
 
     public String getCpf() {

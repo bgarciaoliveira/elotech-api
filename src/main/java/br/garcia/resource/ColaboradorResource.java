@@ -2,6 +2,7 @@ package br.garcia.resource;
 
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
+import br.garcia.util.UUUID;
 import br.garcia.util.Validator;
 import org.h2.engine.Session;
 import org.json.JSONObject;
@@ -50,7 +51,7 @@ public class ColaboradorResource {
 
                 Colaborador serviceResponse = colaboradorService.create(colaborador);
 
-                if (serviceResponse != null && serviceResponse.getId() != 0) {
+                if (serviceResponse != null && !serviceResponse.getId().equals("")) {
                     JSONObject response = new JSONObject();
 
                     response.put("id", colaborador.getId());
@@ -79,7 +80,7 @@ public class ColaboradorResource {
     }
 
     @RequestMapping(value = "/{id}")
-    public ResponseEntity getById(@PathVariable Long id) {
+    public ResponseEntity getById(@PathVariable String id) {
         Colaborador colaborador = colaboradorService.getById(id);
 
         if (colaborador != null) {
@@ -94,10 +95,10 @@ public class ColaboradorResource {
         JSONObject jsonObj = new JSONObject(json);
 
         if (!jsonObj.isEmpty()) {
-            long id = jsonObj.getLong("id");
+            String id = jsonObj.getString("id");
             String nome = jsonObj.getString("nome");
 
-            if (id > 0 && Validator.checkNome(nome)) {
+            if (!id.equals("") && Validator.checkNome(nome)) {
                 boolean serviceResponse = colaboradorService.updateNome(id, nome);
 
                 if (serviceResponse) {
@@ -115,10 +116,10 @@ public class ColaboradorResource {
 
         if (!jsonObj.isEmpty()) {
 
-            long id = jsonObj.getLong("id");
+            String id = jsonObj.getString("id");
             String email = jsonObj.getString("email");
 
-            if (id > 0 && Validator.checkEmail(email)) {
+            if (!id.equals("") && Validator.checkEmail(email)) {
                 boolean serviceResponse = colaboradorService.updateEmail(id, email);
 
                 if (serviceResponse) {
@@ -131,9 +132,9 @@ public class ColaboradorResource {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
+    public ResponseEntity delete(@PathVariable String id) {
 
-        if (id > 0 && colaboradorService.delete(id)) {
+        if (!id.equals("") && colaboradorService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
 
@@ -150,9 +151,9 @@ public class ColaboradorResource {
             String senha = jsonObject.get("senha").toString();
 
             if (Validator.checkEmail(email) && Validator.checkSenha(senha)) {
-                Long id = colaboradorService.auth(email, senha);
+                String id = colaboradorService.auth(email, senha);
 
-                if (id > 0) {
+                if (!id.equals("")) {
                     JSONObject response = new JSONObject();
                     response.put("id", id);
 
