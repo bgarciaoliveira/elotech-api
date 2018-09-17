@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 
 @Entity
@@ -38,6 +39,10 @@ public class Colaborador {
     @NotNull
     @Size(min=3, max=30)
     private String nome;
+
+    @Column(name = "tarefas")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "colaborador", targetEntity = Tarefa.class, fetch = FetchType.LAZY)
+    private List<Tarefa> tarefas;
 
     public String getId() {
         return id;
@@ -73,5 +78,13 @@ public class Colaborador {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public List<Tarefa> getTarefas() {
+        return tarefas;
+    }
+
+    public void setTarefas(List<Tarefa> tarefas) {
+        this.tarefas = tarefas;
     }
 }

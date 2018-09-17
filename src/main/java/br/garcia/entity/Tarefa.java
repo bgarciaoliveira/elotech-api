@@ -36,6 +36,10 @@ public class Tarefa {
     @Size(max = 500)
     private String descricao;
 
+    @ManyToOne
+    @JoinColumn(name="colaborador_id")
+    private Colaborador colaborador;
+
     public String getId() {
         return id;
     }
@@ -66,5 +70,13 @@ public class Tarefa {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public Colaborador getColaborador() {
+        return colaborador;
+    }
+
+    public void setColaborador(Colaborador colaborador) {
+        this.colaborador = colaborador;
     }
 }

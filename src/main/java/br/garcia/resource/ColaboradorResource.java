@@ -99,18 +99,6 @@ public class ColaboradorResource {
 
     //endregion
 
-    @RequestMapping
-    @Deprecated
-    public ResponseEntity getAll() {
-        List<Colaborador> colaboradores = colaboradorService.getAll();
-
-        if (!colaboradores.isEmpty()) {
-            return ResponseEntity.ok(colaboradores);
-        }
-
-        return ResponseEntity.notFound().build();
-    }
-
     @RequestMapping(value = "/{id}")
     public ResponseEntity getById(@PathVariable String id) {
         Colaborador colaborador = colaboradorService.getById(id);
@@ -172,6 +160,5 @@ public class ColaboradorResource {
 
         return ResponseEntity.notFound().build();
     }
-
 
 }

@@ -21,10 +21,6 @@ public class ColaboradorService {
         return colaboradorRepository.save(colaborador);
     }
 
-    public List<Colaborador> getAll(){
-        return colaboradorRepository.findAll();
-    }
-
     public Colaborador getById(String id){
 
         return colaboradorRepository.findOne(id);
