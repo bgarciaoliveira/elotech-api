@@ -2,6 +2,7 @@ package br.garcia.resource;
 
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
+import br.garcia.util.Jwt;
 import br.garcia.util.UUUID;
 import br.garcia.util.Validator;
 import org.h2.engine.Session;
@@ -16,7 +17,6 @@ import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-
 @RestController
 @RequestMapping(
         value = ColaboradorResource.URI_RESOURCE,
@@ -29,6 +29,7 @@ public class ColaboradorResource {
     @Autowired
     private ColaboradorService colaboradorService;
 
+    //region no required token endpoints
     @PostMapping
     public ResponseEntity create(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         JSONObject jsonObj = new JSONObject(json);
@@ -68,7 +69,39 @@ public class ColaboradorResource {
         return ResponseEntity.badRequest().build();
     }
 
+    @PostMapping(value = "/auth")
+    public ResponseEntity auth(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
+        JSONObject jsonObject = new JSONObject(json);
+
+        if (!jsonObject.isEmpty()) {
+            String email = jsonObject.get("email").toString().trim();
+            String senha = jsonObject.get("senha").toString();
+
+            if (Validator.checkEmail(email) && Validator.checkSenha(senha)) {
+                String id = colaboradorService.auth(email, senha);
+                String token = Jwt.create(id);
+
+                if (!id.equals("") && !token.equals("")) {
+                    JSONObject response = new JSONObject();
+                    response.put("id", id);
+                    response.put("token", token);
+
+                    return ResponseEntity.ok(response.toString());
+
+                } else {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
+            }
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
+
+    //endregion
+
     @RequestMapping
+    @Deprecated
     public ResponseEntity getAll() {
         List<Colaborador> colaboradores = colaboradorService.getAll();
 
@@ -141,30 +174,5 @@ public class ColaboradorResource {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping(value = "/auth")
-    public ResponseEntity auth(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-        JSONObject jsonObject = new JSONObject(json);
-
-        if (!jsonObject.isEmpty()) {
-            String email = jsonObject.get("email").toString().trim();
-            String senha = jsonObject.get("senha").toString();
-
-            if (Validator.checkEmail(email) && Validator.checkSenha(senha)) {
-                String id = colaboradorService.auth(email, senha);
-
-                if (!id.equals("")) {
-                    JSONObject response = new JSONObject();
-                    response.put("id", id);
-
-                    return ResponseEntity.ok(response.toString());
-
-                } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-                }
-            }
-        }
-
-        return ResponseEntity.badRequest().build();
-    }
 }

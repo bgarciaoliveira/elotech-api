@@ -1,5 +1,6 @@
 package br.garcia.configuration;
 
+import br.garcia.util.Jwt;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -10,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
@@ -30,19 +33,15 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
                 String uri = httpServletRequest.getRequestURI();
 
-                if(!uri.equals("/api/colaboradores/auth")){
+                List<String> noRequiredTokenEndpoints = new ArrayList<>();
+                noRequiredTokenEndpoints.add("/api/colaboradores/auth");
+                noRequiredTokenEndpoints.add("/api/colaboradores/create");
+
+                if(!noRequiredTokenEndpoints.contains(uri)){
                     String token = httpServletRequest.getHeader("token");
+                    String id = httpServletRequest.getHeader("id");
 
-
-
-
-                    tring uuuid2 = "BB2A78028923499A809B8805993CB94E";
-                    String token2 = Jwt.create(uuuid2);
-
-
-
-
-
+                    return Jwt.verify(token, id);
                 }
 
                 return true;
