@@ -48,7 +48,6 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                 noTokenEndpoints.add("/api/colaboradores");
 
                 if(!noTokenEndpoints.contains(uri)){
-                    System.out.println("token request packet");
                     String token = httpServletRequest.getHeader("token");
                     String id = httpServletRequest.getHeader("id");
 

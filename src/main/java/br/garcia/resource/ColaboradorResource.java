@@ -81,9 +81,6 @@ public class ColaboradorResource {
                 String id = colaboradorService.auth(email, senha);
                 String token = Jwt.create(id);
 
-                System.out.println(id);
-                System.out.println(token);
-
                 if (!id.equals("") && !token.equals("")) {
                     JSONObject response = new JSONObject();
                     response.put("id", id);

@@ -43,10 +43,6 @@ public class Colaborador {
         return id;
     }
 
-    public void generateId() {
-        this.id = UUUID.generate();
-    }
-
     public String getCpf() {
         return cpf;
     }
