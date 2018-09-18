@@ -27,13 +27,13 @@ public class TarefaResource {
         throw new NotImplementedException();
     }
 
-    @RequestMapping(value = "/{colaboradorId}/{id}")
-    public ResponseEntity getById(@PathVariable String colaboradorId, String id){
+    @RequestMapping(value = "/{id}")
+    public ResponseEntity getById(@PathVariable String id){
         throw new NotImplementedException();
     }
 
-    @PutMapping(value = "/updateNome")
-    public ResponseEntity updateNome(@RequestBody String json){
+    @PutMapping(value = "/updateTitulo")
+    public ResponseEntity updateTitulo(@RequestBody String json){
         throw new NotImplementedException();
     }
 
@@ -47,8 +47,8 @@ public class TarefaResource {
         throw new NotImplementedException();
     }
 
-    @DeleteMapping(value = "/{colaboradorId}/{id}")
-    public ResponseEntity delete(@PathVariable String colaboradorId, String id){
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity delete(@PathVariable String id){
         throw new NotImplementedException();
     }
 }
