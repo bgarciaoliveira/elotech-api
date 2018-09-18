@@ -63,4 +63,17 @@ public class Validator {
     public static Boolean checkSenha(String senha){
         return senha.length() <= 32;
     }
+
+    public static Boolean checkTitulo(String titulo){
+        return titulo.length() <= 100;
+
+    }
+
+    public static Boolean checkDescricao(String descricao){
+        return descricao.length() <= 500;
+    }
+
+    public static Boolean checkStatus(int status){
+        return status >= 1 && status <= 5;
+    }
 }

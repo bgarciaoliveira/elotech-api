@@ -1,18 +1,13 @@
 package br.garcia.entity;
 
-import br.garcia.util.HashLibrary;
-import br.garcia.util.UUUID;
-import org.hibernate.annotations.Generated;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 @Entity
-@Table(name = "colaborador")
+@Table(name = "tarefa")
 public class Tarefa {
 
     @Id
@@ -22,7 +17,7 @@ public class Tarefa {
     private String id;
 
     @Column(name = "codigo")
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long codigo;
 
     @Column(name = "titulo")
@@ -42,6 +37,7 @@ public class Tarefa {
 
     @ManyToOne
     @JoinColumn(name="colaborador_id")
+    @JsonBackReference
     private Colaborador colaborador;
 
     public String getId() {

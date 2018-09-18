@@ -1,16 +1,20 @@
 package br.garcia.resource;
 
+import br.garcia.entity.Colaborador;
 import br.garcia.entity.Tarefa;
+import br.garcia.entity.TarefaStatus;
 import br.garcia.service.ColaboradorService;
 import br.garcia.service.TarefaService;
+import br.garcia.util.Validator;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.annotation.Resource;
-import javax.xml.ws.Response;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,7 +28,60 @@ public class TarefaResource {
     @Autowired
     private TarefaService tarefaService;
 
-    @RequestMapping(value = "/{colaboradorId}")
+    @Autowired
+    private ColaboradorService colaboradorService;
+
+    @PostMapping
+    public ResponseEntity create(@RequestBody String json){
+
+        if(json != null && !json.equals("")){
+            JSONObject jsonObj = new JSONObject(json);
+
+            if(!jsonObj.isEmpty() && jsonObj.has("titulo") && jsonObj.has("descricao") && jsonObj.has("colaboradorId")){
+
+                String titulo = jsonObj.getString("titulo");
+                String descricao = jsonObj.getString("descricao");
+                String colaboradorId = jsonObj.getString("colaboradorId");
+
+                TarefaStatus status = TarefaStatus.TODO;
+
+                if(jsonObj.has("status")){
+                    status.valor = jsonObj.getInt("status");
+                }
+
+                if(Validator.checkTitulo(titulo) && Validator.checkDescricao(descricao) && Validator.checkStatus(status.valor)){
+                    Tarefa tarefa = new Tarefa();
+
+                    tarefa.setTitulo(titulo);
+                    tarefa.setDescricao(descricao);
+                    tarefa.setStatus(status);
+
+                    Colaborador c = colaboradorService.getById(colaboradorId);
+
+                    tarefa.setColaborador(c);
+
+                    Tarefa serviceResponse = tarefaService.create(tarefa);
+
+                    if(serviceResponse != null && !serviceResponse.getId().equals("")){
+                        JSONObject response = new JSONObject();
+
+                        response.put("id", tarefa.getId());
+
+                        return ResponseEntity
+                                .created(URI.create(String.format("%s/%s", TarefaResource.URI_RESOURCE, serviceResponse.getId())))
+                                .body(response.toString());
+                    }
+                    else {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                    }
+                }
+            }
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
+
+    @RequestMapping(value = "/getAll/{colaboradorId}")
     public ResponseEntity getAll(@PathVariable String colaboradorId){
 
         if(colaboradorId != null && !colaboradorId.equals("")){
@@ -58,7 +115,17 @@ public class TarefaResource {
 
     @PutMapping(value = "/updateTitulo")
     public ResponseEntity updateTitulo(@RequestBody String json){
-        throw new NotImplementedException();
+
+        if(json != null && !json.equals("")){
+            JSONObject jsonObj = new JSONObject(json);
+
+            if(!jsonObj.isEmpty() && jsonObj.has("id") && jsonObj.has("titulo")){
+                String id = jsonObj.getString("id");
+                String titulo = jsonObj.getString("titulo");
+            }
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping(value = "/updateDescricao")

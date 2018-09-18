@@ -2,6 +2,7 @@ package br.garcia.entity;
 
 import br.garcia.util.HashLibrary;
 import br.garcia.util.UUUID;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -42,6 +43,7 @@ public class Colaborador {
 
     @Column(name = "tarefas")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "colaborador", targetEntity = Tarefa.class, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Tarefa> tarefas;
 
     public String getId() {

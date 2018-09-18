@@ -9,8 +9,6 @@
 .classpath
 .settings
 
-.workspace
-
 # Idea
 .idea
 *.iml

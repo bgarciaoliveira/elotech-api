@@ -51,9 +51,11 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                     String token = httpServletRequest.getHeader("token");
                     String id = httpServletRequest.getHeader("id");
 
+
                     if(token != null && id != null && !token.equals("") && !id.equals("")){
 
                         if(Jwt.verify(token, id)){
+
                             return true;
                         }
                     }

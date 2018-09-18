@@ -7,7 +7,7 @@ public enum TarefaStatus{
     TEST(4),
     DONE(5);
 
-    int valor;
+    public int valor;
     TarefaStatus(int _valor){
         valor = valor;
     }

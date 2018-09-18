@@ -14,6 +14,10 @@ public class TarefaService {
     @Autowired
     private TarefaRepository tarefaRepository;
 
+    public Tarefa create(Tarefa tarefa)  {
+        return tarefaRepository.save(tarefa);
+    }
+
     public List<Tarefa> getAllByColaborador(String colaboradorId){
         return tarefaRepository.findAllByColaborador_Id(colaboradorId);
     }
