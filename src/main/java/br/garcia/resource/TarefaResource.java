@@ -1,5 +1,6 @@
 package br.garcia.resource;
 
+import br.garcia.entity.Tarefa;
 import br.garcia.service.ColaboradorService;
 import br.garcia.service.TarefaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.Resource;
 import javax.xml.ws.Response;
+import java.util.List;
 
 @RestController
 @RequestMapping(
@@ -24,7 +26,18 @@ public class TarefaResource {
 
     @RequestMapping(value = "/{colaboradorId}")
     public ResponseEntity getAll(@PathVariable String colaboradorId){
-        throw new NotImplementedException();
+
+        if(colaboradorId != null && !colaboradorId.equals("")){
+            List<Tarefa> tarefas = tarefaService.getAllByColaborador(colaboradorId);
+
+            if(tarefas != null && !tarefas.isEmpty()){
+                return ResponseEntity.ok(tarefas);
+            }
+
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
     @RequestMapping(value = "/{id}")
