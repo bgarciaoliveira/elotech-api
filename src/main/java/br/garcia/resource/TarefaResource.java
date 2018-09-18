@@ -42,7 +42,18 @@ public class TarefaResource {
 
     @RequestMapping(value = "/{id}")
     public ResponseEntity getById(@PathVariable String id){
-        throw new NotImplementedException();
+
+        if(id != null && !id.equals("")){
+            Tarefa tarefa = tarefaService.getById(id);
+
+            if(tarefa != null && !tarefa.getId().equals("")){
+                return ResponseEntity.ok(tarefa);
+            }
+
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping(value = "/updateTitulo")
