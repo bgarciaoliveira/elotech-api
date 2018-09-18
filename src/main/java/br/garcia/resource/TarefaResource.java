@@ -140,6 +140,10 @@ public class TarefaResource {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@PathVariable String id){
-        throw new NotImplementedException();
+        if (!id.equals("") && tarefaService.delete(id)) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
