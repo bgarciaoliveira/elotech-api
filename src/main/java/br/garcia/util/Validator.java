@@ -1,5 +1,6 @@
 package br.garcia.util;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,5 +76,10 @@ public class Validator {
 
     public static Boolean checkStatus(int status){
         return status >= 1 && status <= 5;
+    }
+
+    public static Boolean headerId(List<String> listId){
+        return !listId.isEmpty() && listId.size() == 1;
+
     }
 }

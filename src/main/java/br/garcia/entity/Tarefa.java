@@ -1,6 +1,9 @@
 package br.garcia.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sun.xml.internal.ws.developer.Serialization;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,6 +11,10 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "tarefa")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
+
+
 public class Tarefa {
 
     @Id
@@ -26,18 +33,17 @@ public class Tarefa {
     private String titulo;
 
     @Column(name = "descricao")
-    @NotNull
     @Size(max = 500)
     private String descricao;
 
     @Column(name = "status")
     @NotNull
     @Enumerated(EnumType.ORDINAL)
-    TarefaStatus status;
+    private TarefaStatus status;
 
     @ManyToOne
     @JoinColumn(name="colaborador_id")
-    @JsonBackReference
+    @JsonIgnore
     private Colaborador colaborador;
 
     public String getId() {
@@ -87,4 +93,5 @@ public class Tarefa {
     public void setStatus(TarefaStatus status) {
         this.status = status;
     }
+
 }

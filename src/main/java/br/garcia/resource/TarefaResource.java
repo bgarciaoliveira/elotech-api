@@ -8,6 +8,7 @@ import br.garcia.service.TarefaService;
 import br.garcia.util.Validator;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,21 +59,23 @@ public class TarefaResource {
 
                     Colaborador c = colaboradorService.getById(colaboradorId);
 
-                    tarefa.setColaborador(c);
+                    if(!c.getId().equals("")){
+                        tarefa.setColaborador(c);
 
-                    Tarefa serviceResponse = tarefaService.create(tarefa);
+                        Tarefa serviceResponse = tarefaService.create(tarefa);
 
-                    if(serviceResponse != null && !serviceResponse.getId().equals("")){
-                        JSONObject response = new JSONObject();
+                        if(serviceResponse != null && !serviceResponse.getId().equals("")){
+                            JSONObject response = new JSONObject();
 
-                        response.put("id", tarefa.getId());
+                            response.put("id", tarefa.getId());
 
-                        return ResponseEntity
-                                .created(URI.create(String.format("%s/%s", TarefaResource.URI_RESOURCE, serviceResponse.getId())))
-                                .body(response.toString());
-                    }
-                    else {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                            return ResponseEntity
+                                    .created(URI.create(String.format("%s/%s", TarefaResource.URI_RESOURCE, serviceResponse.getId())))
+                                    .body(response.toString());
+                        }
+                        else {
+                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                        }
                     }
                 }
             }
@@ -81,8 +84,10 @@ public class TarefaResource {
         return ResponseEntity.badRequest().build();
     }
 
-    @RequestMapping(value = "/getAll/{colaboradorId}")
-    public ResponseEntity getAll(@PathVariable String colaboradorId){
+    @RequestMapping
+    public ResponseEntity getAll(@RequestHeader HttpHeaders headers){
+
+        String colaboradorId = headers.getFirst("id");
 
         if(colaboradorId != null && !colaboradorId.equals("")){
             List<Tarefa> tarefas = tarefaService.getAllByColaborador(colaboradorId);

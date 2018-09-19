@@ -6,6 +6,7 @@ import br.garcia.util.Jwt;
 import br.garcia.util.Validator;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -100,7 +101,10 @@ public class ColaboradorResource {
     //endregion
 
     @RequestMapping(value = "/{id}")
-    public ResponseEntity getById(@PathVariable String id) {
+    public ResponseEntity getById(@PathVariable String id, @RequestHeader HttpHeaders headers) {
+
+
+
         Colaborador colaborador = colaboradorService.getById(id);
 
         if (colaborador != null) {
