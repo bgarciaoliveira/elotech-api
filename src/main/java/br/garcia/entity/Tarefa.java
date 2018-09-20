@@ -9,11 +9,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Entity
 @Table(name = "tarefa")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 public class Tarefa {
 
@@ -21,27 +21,38 @@ public class Tarefa {
     @Column(name = "id")
     @GenericGenerator(name = "client_id", strategy = "br.garcia.entity.generator.UUUIDGenerator")
     @GeneratedValue(generator = "client_id")
+    @NotNull
+    @NotEmpty
+    @NotBlank
     private String id;
 
     @Column(name = "codigo")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @NotNull
+    @NotEmpty
     private Long codigo;
 
     @Column(name = "titulo")
     @NotNull
+    @NotEmpty
+    @NotBlank
     @Size(max = 100)
     private String titulo;
 
     @Column(name = "descricao")
     @Size(max = 500)
+    @NotNull
     private String descricao;
 
     @Column(name = "status")
     @NotNull
+    @Min(1)
+    @Max(5)
     private int status;
 
     @Column(name = "colaborador_id")
     @NotNull
+    @NotEmpty
     @Size(max = 500)
     private String colaboradorId;
 

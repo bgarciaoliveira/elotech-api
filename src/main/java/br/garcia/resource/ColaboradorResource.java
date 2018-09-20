@@ -84,7 +84,12 @@ public class ColaboradorResource {
         Colaborador colaborador = colaboradorService.getById(id);
 
         if (!isNull(colaborador) && !colaborador.getId().isEmpty()) {
-            return ResponseEntity.ok(colaborador);
+            JSONObject response = new JSONObject();
+            response.put("id", colaborador.getId());
+            response.put("cpf", colaborador.getCpf());
+            response.put("email", colaborador.getEmail());
+            response.put("nome", colaborador.getNome());
+            return ResponseEntity.ok(response);
         }
 
         return ResponseEntity.notFound().build();
@@ -94,10 +99,13 @@ public class ColaboradorResource {
     public ResponseEntity update(@RequestHeader HttpHeaders headers, @RequestBody @Valid ColaboradorUpdateDto colaboradorDto){
         String id = Functions.getIdFromHeaders(headers);
 
-        Colaborador colaborador = mapper.map(colaboradorDto, Colaborador.class);
+        Colaborador colaborador = colaboradorService.getById(id);
 
         if(nonNull(colaborador)){
-            colaborador.setId(id);
+
+            colaborador.setEmail(colaboradorDto.getEmail());
+            colaborador.setNome(colaboradorDto.getNome());
+            colaborador.setCpf(colaboradorDto.getCpf());
 
             if(colaboradorService.update(colaborador)){
                 return ResponseEntity.noContent().build();
@@ -108,6 +116,8 @@ public class ColaboradorResource {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@RequestHeader HttpHeaders headers) {

@@ -3,21 +3,28 @@ package br.garcia.dto;
 import com.sun.istack.internal.NotNull;
 
 import javax.persistence.Column;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 public class TarefaUpdateDto {
 
     @NotNull
+    @NotEmpty
+    @NotBlank
     private String id;
 
     @NotNull
+    @NotEmpty
+    @NotBlank
     @Size(max = 100)
     private String titulo;
 
     @Size(max = 500)
+    @NotNull
     private String descricao;
 
     @NotNull
+    @Min(1)
+    @Max(5)
     private int status;
 
     public String getId() {

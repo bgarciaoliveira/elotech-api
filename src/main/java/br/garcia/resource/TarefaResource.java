@@ -91,6 +91,22 @@ public class TarefaResource {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    @RequestMapping(value = "/getEstatisticas")
+    public ResponseEntity getEstatisticas(@RequestHeader HttpHeaders headers){
+        String colaboradorId = Functions.getIdFromHeaders(headers);
+
+        List<Tarefa> tarefas = tarefaService.getAllByColaborador(colaboradorId);
+
+        JSONObject response = new JSONObject();
+
+        for(byte i = 1; i <= 5; i++){
+            final byte finalI = i;
+            response.put(String.valueOf(i), tarefas.stream().filter(tarefa -> tarefa.getStatus() == finalI).count());
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping
     public ResponseEntity update(@RequestHeader HttpHeaders headers, @RequestBody @Valid TarefaUpdateDto tarefaDto){
 
@@ -122,6 +138,7 @@ public class TarefaResource {
         Tarefa tarefa = tarefaService.getById(id);
 
         if(colaboradorId.equals(tarefa.getColaboradorId())){
+            //colaborador pode deletar apenas as tarefas em que ele é dono
             if(tarefaService.delete(id)){
                 return ResponseEntity.noContent().build();
             }

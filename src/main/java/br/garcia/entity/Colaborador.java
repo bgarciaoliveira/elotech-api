@@ -5,8 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
@@ -15,30 +14,39 @@ import java.security.NoSuchAlgorithmException;
 public class Colaborador {
 
     @Id
+    @NotNull
+    @NotEmpty
+    @NotBlank
     @Column(name = "id")
     @GenericGenerator(name = "client_id", strategy = "br.garcia.entity.generator.UUUIDGenerator")
     @GeneratedValue(generator = "client_id")
     private String id;
 
     @Column(name = "cpf", unique=true)
-    @Size(min=11, max=11)
     @NotNull
+    @NotEmpty
+    @NotBlank
+    @Size(min=11, max=11)
     private String cpf;
 
     @Column(name = "email")
     @NotNull
+    @NotEmpty
+    @NotBlank
     @Size(max=60)
-    @Email
     private String email;
 
     @Column(name = "senha")
     @NotNull
+    @NotEmpty
     @Size(max=500)
     private String senha;
 
     @Column(name = "nome")
     @NotNull
-    @Size(min=3, max=30)
+    @NotEmpty
+    @NotBlank
+    @Size(max=40)
     private String nome;
 
     public String getId() {
