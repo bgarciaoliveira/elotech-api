@@ -3,10 +3,7 @@ package br.garcia.dto;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.Column;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 public class ColaboradorCreateDto {
 
@@ -14,12 +11,14 @@ public class ColaboradorCreateDto {
     @NotEmpty
     @NotBlank
     @Size(min=11, max=11)
+    @Pattern(regexp="/^(([0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2})|([0-9]{11}))$/ \n")
     private String cpf;
 
     @NotNull
     @NotEmpty
     @NotBlank
     @Size(max=60)
+    @Pattern(regexp="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/\n")
     private String email;
 
     @NotNull
