@@ -13,9 +13,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "tarefa")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-
-
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 public class Tarefa {
 
@@ -40,12 +38,12 @@ public class Tarefa {
 
     @Column(name = "status")
     @NotNull
-    @Enumerated(EnumType.ORDINAL)
-    private TarefaStatus status;
+    private int status;
 
-    @ManyToOne
-    @JoinColumn(name="colaborador_id")
-    private Colaborador colaborador;
+    @Column(name = "colaborador_id")
+    @NotNull
+    @Size(max = 500)
+    private String colaboradorId;
 
     public String getId() {
         return id;
@@ -79,20 +77,19 @@ public class Tarefa {
         this.descricao = descricao;
     }
 
-    public Colaborador getColaborador() {
-        return colaborador;
-    }
-
-    public void setColaborador(Colaborador colaborador) {
-        this.colaborador = colaborador;
-    }
-
-    public TarefaStatus getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(TarefaStatus status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
+    public String getColaboradorId() {
+        return colaboradorId;
+    }
+
+    public void setColaboradorId(String colaboradorId) {
+        this.colaboradorId = colaboradorId;
+    }
 }

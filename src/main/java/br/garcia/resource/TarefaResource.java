@@ -1,22 +1,25 @@
 package br.garcia.resource;
 
-import br.garcia.entity.Colaborador;
+import br.garcia.dto.TarefaCreateDto;
+import br.garcia.dto.TarefaUpdateDto;
 import br.garcia.entity.Tarefa;
-import br.garcia.entity.TarefaStatus;
-import br.garcia.service.ColaboradorService;
 import br.garcia.service.TarefaService;
-import br.garcia.util.Validator;
+import br.garcia.util.Functions;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
+
+import static java.util.Objects.nonNull;
 
 @RestController
 @RequestMapping(
@@ -29,128 +32,103 @@ public class TarefaResource {
     @Autowired
     private TarefaService tarefaService;
 
-    @Autowired
-    private ColaboradorService colaboradorService;
+    private ModelMapper mapper = new ModelMapper();
 
     @PostMapping
-    public ResponseEntity create(@RequestBody String json){
+    public ResponseEntity create(@RequestHeader HttpHeaders headers, @RequestBody @Valid TarefaCreateDto tarefaDto){
 
-        if(json != null && !json.equals("")){
-            JSONObject jsonObj = new JSONObject(json);
+        String id = Functions.getIdFromHeaders(headers);
 
-            if(!jsonObj.isEmpty() && jsonObj.has("titulo") && jsonObj.has("descricao") && jsonObj.has("colaboradorId")){
+        Tarefa tarefa = mapper.map(tarefaDto, Tarefa.class);
 
-                String titulo = jsonObj.getString("titulo");
-                String descricao = jsonObj.getString("descricao");
-                String colaboradorId = jsonObj.getString("colaboradorId");
+        if(nonNull(tarefa)){
 
-                TarefaStatus status = TarefaStatus.TODO;
+            tarefa.setColaboradorId(id);
 
-                if(jsonObj.has("status")){
-                    status.valor = jsonObj.getInt("status");
-                }
+            Tarefa serviceResponse = tarefaService.create(tarefa);
 
-                if(Validator.checkTitulo(titulo) && Validator.checkDescricao(descricao) && Validator.checkStatus(status.valor)){
-                    Tarefa tarefa = new Tarefa();
-
-                    tarefa.setTitulo(titulo);
-                    tarefa.setDescricao(descricao);
-                    tarefa.setStatus(status);
-
-                    Colaborador c = colaboradorService.getById(colaboradorId);
-
-                    if(!c.getId().equals("")){
-                        tarefa.setColaborador(c);
-
-                        Tarefa serviceResponse = tarefaService.create(tarefa);
-
-                        if(serviceResponse != null && !serviceResponse.getId().equals("")){
-                            JSONObject response = new JSONObject();
-
-                            response.put("id", tarefa.getId());
-
-                            return ResponseEntity
-                                    .created(URI.create(String.format("%s/%s", TarefaResource.URI_RESOURCE, serviceResponse.getId())))
-                                    .body(response.toString());
-                        }
-                        else {
-                            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                        }
-                    }
-                }
+            if(nonNull(serviceResponse) && !serviceResponse.getId().isEmpty()){
+                JSONObject response = new JSONObject();
+                response.put("id", tarefa.getId());
+                return ResponseEntity
+                        .created(URI.create(String.format("%s/%s", TarefaResource.URI_RESOURCE, serviceResponse.getId())))
+                        .body(response.toString());
             }
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @RequestMapping
-    public ResponseEntity getAll(@RequestHeader HttpHeaders headers){
+    public ResponseEntity getAll(@RequestHeader HttpHeaders headers) {
 
-        if(Validator.checkHeaderIdList(headers.get("id"))){
-            String colaboradorId = headers.getFirst("id");
+        String id = Functions.getIdFromHeaders(headers);
 
-            if(colaboradorId != null && !colaboradorId.equals("")){
-                List<Tarefa> tarefas = tarefaService.getAllByColaborador(colaboradorId);
+        List<Tarefa> tarefas = tarefaService.getAllByColaborador(id);
 
-                if(tarefas != null && !tarefas.isEmpty()){
-                    return ResponseEntity.ok(tarefas);
-                }
-
-                return ResponseEntity.notFound().build();
-            }
+        if (nonNull(tarefas) && !tarefas.isEmpty()) {
+            return ResponseEntity.ok(tarefas);
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "/{id}")
-    public ResponseEntity getById(@PathVariable String id){
+    public ResponseEntity getById(@RequestHeader HttpHeaders headers, @PathVariable @NotNull String id){
+        String colaboradorId = Functions.getIdFromHeaders(headers);
+        Tarefa tarefa = tarefaService.getById(id);
 
-        if(id != null && !id.equals("")){
-            Tarefa tarefa = tarefaService.getById(id);
-
-            if(tarefa != null && !tarefa.getId().equals("")){
+        if(colaboradorId.equals(tarefa.getColaboradorId())){
+            if(!tarefa.getId().isEmpty()) {
+                //colaborador pode obter apenas as tarefas em que ele é dono
                 return ResponseEntity.ok(tarefa);
+            }
+
+            return ResponseEntity.notFound().build();
+
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PutMapping
+    public ResponseEntity update(@RequestHeader HttpHeaders headers, @RequestBody @Valid TarefaUpdateDto tarefaDto){
+
+        String colaboradorId = Functions.getIdFromHeaders(headers);
+
+        Tarefa storedTarefa = tarefaService.getById(tarefaDto.getId());
+
+        if(colaboradorId.equals(storedTarefa.getColaboradorId())){
+            //colaborador pode alterar apenas as tarefas em que ele é dono
+
+            storedTarefa.setTitulo(tarefaDto.getTitulo());
+            storedTarefa.setDescricao(tarefaDto.getDescricao());
+            storedTarefa.setStatus(tarefaDto.getStatus());
+
+            if(tarefaService.update(storedTarefa)){
+                return ResponseEntity.noContent().build();
             }
 
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.badRequest().build();
-    }
-
-    @PutMapping(value = "/updateTitulo")
-    public ResponseEntity updateTitulo(@RequestBody String json){
-
-        if(json != null && !json.equals("")){
-            JSONObject jsonObj = new JSONObject(json);
-
-            if(!jsonObj.isEmpty() && jsonObj.has("id") && jsonObj.has("titulo")){
-                String id = jsonObj.getString("id");
-                String titulo = jsonObj.getString("titulo");
-            }
-        }
-
-        return ResponseEntity.badRequest().build();
-    }
-
-    @PutMapping(value = "/updateDescricao")
-    public ResponseEntity updateDescricao(@RequestBody String json){
-        throw new NotImplementedException();
-    }
-
-    @PutMapping(value = "/updateStatus")
-    public ResponseEntity updateStatus(@RequestBody String json){
-        throw new NotImplementedException();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity delete(@PathVariable String id){
-        if (!id.equals("") && tarefaService.delete(id)) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity delete(@RequestHeader HttpHeaders headers, @PathVariable @NotNull String id){
+
+        String colaboradorId = Functions.getIdFromHeaders(headers);
+        Tarefa tarefa = tarefaService.getById(id);
+
+        if(colaboradorId.equals(tarefa.getColaboradorId())){
+            if(tarefaService.delete(id)){
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

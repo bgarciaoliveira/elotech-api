@@ -102,6 +102,8 @@ public class ColaboradorResource {
             if(colaboradorService.update(colaborador)){
                 return ResponseEntity.noContent().build();
             }
+
+            return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface TarefaRepository extends JpaRepository<Tarefa, String> {
 
-    List<Tarefa> findAllByColaborador_Id(String colaboradorId);
+    List<Tarefa> findAllByColaboradorId(String colaboradorId);
 
 
 }
