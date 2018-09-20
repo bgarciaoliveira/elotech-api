@@ -12,5 +12,5 @@ public interface TarefaRepository extends JpaRepository<Tarefa, String> {
 
     List<Tarefa> findAllByColaboradorId(String colaboradorId);
 
-
+    long countAllByColaboradorId(String idColaborador);
 }

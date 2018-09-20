@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.internal.NotNull;
 import com.sun.xml.internal.ws.developer.Serialization;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -26,10 +28,7 @@ public class Tarefa {
     @NotBlank
     private String id;
 
-    @Column(name = "codigo")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @NotNull
-    @NotEmpty
     private Long codigo;
 
     @Column(name = "titulo")

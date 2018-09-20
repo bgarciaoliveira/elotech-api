@@ -3,9 +3,11 @@ package br.garcia.resource;
 import br.garcia.dto.ColaboradorAuthDto;
 import br.garcia.dto.ColaboradorCreateDto;
 import br.garcia.dto.ColaboradorUpdateDto;
+import br.garcia.dto.ColaboradorUpdateSenhaDto;
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
 import br.garcia.util.Functions;
+import br.garcia.util.HashLibrary;
 import br.garcia.util.Jwt;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -89,7 +91,7 @@ public class ColaboradorResource {
             response.put("cpf", colaborador.getCpf());
             response.put("email", colaborador.getEmail());
             response.put("nome", colaborador.getNome());
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response.toString());
         }
 
         return ResponseEntity.notFound().build();
@@ -117,7 +119,27 @@ public class ColaboradorResource {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
+    @PutMapping(value = "/updateSenha")
+    public ResponseEntity updateSenha(@RequestHeader HttpHeaders headers, @RequestBody @Valid ColaboradorUpdateSenhaDto colaboradorDto) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        String id = Functions.getIdFromHeaders(headers);
+        Colaborador colaborador = colaboradorService.getById(id);
 
+        if(nonNull(colaborador)){
+
+            if(colaborador.getSenha().equals(
+                    HashLibrary.passwordHash(colaboradorDto.getSenhaAntiga())
+            )){
+
+                colaborador.setSenha(colaboradorDto.getSenhaNova());
+
+                if(colaboradorService.update(colaborador)){
+                    return ResponseEntity.noContent().build();
+                }
+            }
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity delete(@RequestHeader HttpHeaders headers) {

@@ -45,6 +45,12 @@ public class TarefaResource {
 
             tarefa.setColaboradorId(id);
 
+            long codigo = tarefaService.getLastCodigoByColaborador(id) + 1;
+
+            tarefa.setCodigo(codigo);
+
+            System.out.println(codigo);
+
             Tarefa serviceResponse = tarefaService.create(tarefa);
 
             if(nonNull(serviceResponse) && !serviceResponse.getId().isEmpty()){
@@ -101,10 +107,10 @@ public class TarefaResource {
 
         for(byte i = 1; i <= 5; i++){
             final byte finalI = i;
-            response.put(String.valueOf(i), tarefas.stream().filter(tarefa -> tarefa.getStatus() == finalI).count());
+            response.put("c" + i, tarefas.stream().filter(tarefa -> tarefa.getStatus() == finalI).count());
         }
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response.toString());
     }
 
     @PutMapping

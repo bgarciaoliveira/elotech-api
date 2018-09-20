@@ -21,6 +21,10 @@ public class TarefaService {
         return tarefaRepository.findAllByColaboradorId(colaboradorId);
     }
 
+    public long getLastCodigoByColaborador(String idColaborador){
+        return tarefaRepository.countAllByColaboradorId(idColaborador);
+    }
+
     public Tarefa getById(String id){
         return tarefaRepository.getOne(id);
     }
