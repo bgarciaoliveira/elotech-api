@@ -2,7 +2,6 @@ package br.garcia.entity;
 
 import br.garcia.util.HashLibrary;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;

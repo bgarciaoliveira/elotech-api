@@ -1,8 +1,5 @@
 package br.garcia.dto;
 
-import org.hibernate.validator.constraints.Email;
-
-import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 public class ColaboradorCreateDto {
@@ -18,7 +15,6 @@ public class ColaboradorCreateDto {
     @NotEmpty
     @NotBlank
     @Size(max=60)
-    @Pattern(regexp="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/\n")
     private String email;
 
     @NotNull
