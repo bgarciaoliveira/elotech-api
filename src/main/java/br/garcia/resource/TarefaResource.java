@@ -87,16 +87,18 @@ public class TarefaResource {
     @RequestMapping
     public ResponseEntity getAll(@RequestHeader HttpHeaders headers){
 
-        String colaboradorId = headers.getFirst("id");
+        if(Validator.checkHeaderIdList(headers.get("id"))){
+            String colaboradorId = headers.getFirst("id");
 
-        if(colaboradorId != null && !colaboradorId.equals("")){
-            List<Tarefa> tarefas = tarefaService.getAllByColaborador(colaboradorId);
+            if(colaboradorId != null && !colaboradorId.equals("")){
+                List<Tarefa> tarefas = tarefaService.getAllByColaborador(colaboradorId);
 
-            if(tarefas != null && !tarefas.isEmpty()){
-                return ResponseEntity.ok(tarefas);
+                if(tarefas != null && !tarefas.isEmpty()){
+                    return ResponseEntity.ok(tarefas);
+                }
+
+                return ResponseEntity.notFound().build();
             }
-
-            return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.badRequest().build();

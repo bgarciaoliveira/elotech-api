@@ -1,6 +1,7 @@
 package br.garcia.configuration;
 
 import br.garcia.util.Jwt;
+import com.sun.deploy.net.HttpUtils;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -46,11 +47,11 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
                 List<String> noTokenEndpoints = new ArrayList<>();
                 noTokenEndpoints.add("/api/colaboradores/auth");
                 noTokenEndpoints.add("/api/colaboradores");
+                noTokenEndpoints.add("/error");
 
                 if(!noTokenEndpoints.contains(uri)){
                     String token = httpServletRequest.getHeader("token");
                     String id = httpServletRequest.getHeader("id");
-
 
                     if(token != null && id != null && !token.equals("") && !id.equals("")){
 

@@ -26,33 +26,9 @@ public class ColaboradorService {
         return colaboradorRepository.findOne(id);
     }
 
-    public boolean updateNome(String id, String nome){
-
-        if(colaboradorRepository.exists(id)){
-            Colaborador colaborador = colaboradorRepository.findOne(id);
-
-            if(!colaborador.getNome().equals(nome)){
-                colaborador.setNome(nome);
-
-                colaboradorRepository.save(colaborador);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean updateEmail(String id, String email){
-
-        if(colaboradorRepository.exists(id)){
-            Colaborador colaborador = colaboradorRepository.findOne(id);
-
-            if(!colaborador.getEmail().equals(email)){
-                colaborador.setEmail(email);
-
-                colaboradorRepository.save(colaborador);
-            }
+    public boolean update(Colaborador colaborador){
+        if(colaboradorRepository.exists(colaborador.getId())){
+            colaboradorRepository.save(colaborador);
 
             return true;
         }

@@ -1,17 +1,14 @@
 package br.garcia.entity;
 
 import br.garcia.util.HashLibrary;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-
 
 @Entity
 @Table(name = "colaborador")
@@ -24,16 +21,19 @@ public class Colaborador {
     private String id;
 
     @Column(name = "cpf", unique=true)
+    @Size(min=11, max=11)
     @NotNull
     private String cpf;
 
     @Column(name = "email")
     @NotNull
-    @Size(min=5, max=60)
+    @Size(max=60)
+    @Email
     private String email;
 
     @Column(name = "senha")
     @NotNull
+    @Size(max=500)
     private String senha;
 
     @Column(name = "nome")
@@ -41,13 +41,12 @@ public class Colaborador {
     @Size(min=3, max=30)
     private String nome;
 
-    @Column(name = "tarefas")
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "colaborador", targetEntity = Tarefa.class, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Tarefa> tarefas;
-
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getCpf() {
@@ -80,13 +79,5 @@ public class Colaborador {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public List<Tarefa> getTarefas() {
-        return tarefas;
-    }
-
-    public void setTarefas(List<Tarefa> tarefas) {
-        this.tarefas = tarefas;
     }
 }

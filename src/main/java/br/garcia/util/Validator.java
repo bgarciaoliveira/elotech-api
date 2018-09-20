@@ -78,7 +78,7 @@ public class Validator {
         return status >= 1 && status <= 5;
     }
 
-    public static Boolean headerId(List<String> listId){
+    public static Boolean checkHeaderIdList(List<String> listId){
         return !listId.isEmpty() && listId.size() == 1;
 
     }

@@ -1,20 +1,26 @@
 package br.garcia.resource;
 
+import br.garcia.dto.ColaboradorAuthDto;
+import br.garcia.dto.ColaboradorCreateDto;
+import br.garcia.dto.ColaboradorUpdateDto;
 import br.garcia.entity.Colaborador;
 import br.garcia.service.ColaboradorService;
+import br.garcia.util.Functions;
 import br.garcia.util.Jwt;
-import br.garcia.util.Validator;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @RestController
 @RequestMapping(
@@ -28,141 +34,88 @@ public class ColaboradorResource {
     @Autowired
     private ColaboradorService colaboradorService;
 
-    //region no required token endpoints
+    private ModelMapper mapper = new ModelMapper();
+
+    //region no token endpoints
     @PostMapping
-    public ResponseEntity create(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        JSONObject jsonObj = new JSONObject(json);
+    public ResponseEntity create(@RequestBody @Valid ColaboradorCreateDto colaboradorDto) {
 
-        // validação campos obrigatórios
-        if (!jsonObj.isEmpty() && jsonObj.has("cpf") && jsonObj.has("email") && jsonObj.has("senha") && jsonObj.has("nome")) {
+        Colaborador colaborador = mapper.map(colaboradorDto, Colaborador.class);
 
-            String cpf = jsonObj.getString("cpf");
-            String email = jsonObj.getString("email");
-            String senha = jsonObj.getString("senha");
-            String nome = jsonObj.getString("nome");
+        Colaborador serviceResponse = colaboradorService.create(colaborador);
 
-            if (Validator.checkCpf(cpf) && Validator.checkEmail(email) && Validator.checkNome(nome) && Validator.checkSenha(senha)) {
-                Colaborador colaborador = new Colaborador();
+        if(nonNull(serviceResponse) && !serviceResponse.getId().isEmpty()){
 
-                colaborador.setCpf(cpf);
-                colaborador.setEmail(email);
-                colaborador.setSenha(senha);
-                colaborador.setNome(nome);
+            JSONObject response = new JSONObject();
+            response.put("id", colaborador.getId());
 
-                Colaborador serviceResponse = colaboradorService.create(colaborador);
-
-                if (serviceResponse != null && !serviceResponse.getId().equals("")) {
-                    JSONObject response = new JSONObject();
-
-                    response.put("id", colaborador.getId());
-
-                    return ResponseEntity
-                            .created(URI.create(String.format("%s/%s", ColaboradorResource.URI_RESOURCE, serviceResponse.getId())))
-                            .body(response.toString());
-                } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                }
-            }
+            return ResponseEntity
+                    .created(URI.create(String.format("%s/%s", ColaboradorResource.URI_RESOURCE, serviceResponse.getId())))
+                    .body(response.toString());
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @PostMapping(value = "/auth")
-    public ResponseEntity auth(@RequestBody String json) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public ResponseEntity auth(@RequestBody @Valid ColaboradorAuthDto colaboradorDto) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-        JSONObject jsonObject = new JSONObject(json);
+        String id = colaboradorService.auth(colaboradorDto.getEmail(), colaboradorDto.getSenha());
+        String token = Jwt.create(id);
 
-        if (!jsonObject.isEmpty() && jsonObject.has("email") && jsonObject.has("senha")) {
+        if(nonNull(id) && !id.isEmpty() && nonNull(token) && !token.isEmpty()){
+            JSONObject response = new JSONObject();
+            response.put("id", id);
+            response.put("token", token);
 
-            String email = jsonObject.get("email").toString().trim();
-            String senha = jsonObject.get("senha").toString();
-
-            if (Validator.checkEmail(email) && Validator.checkSenha(senha)) {
-                String id = colaboradorService.auth(email, senha);
-                String token = Jwt.create(id);
-
-                if (!id.equals("") && !token.equals("")) {
-                    JSONObject response = new JSONObject();
-                    response.put("id", id);
-                    response.put("token", token);
-
-                    return ResponseEntity.ok(response.toString());
-
-                } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-                }
-            }
+            return ResponseEntity.ok(response.toString());
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     //endregion
 
-    @RequestMapping(value = "/{id}")
-    public ResponseEntity getById(@PathVariable String id, @RequestHeader HttpHeaders headers) {
+    @RequestMapping(value = "/me")
+    public ResponseEntity me(@RequestHeader HttpHeaders headers) {
 
-
+        String id = Functions.getIdFromHeaders(headers);
 
         Colaborador colaborador = colaboradorService.getById(id);
 
-        if (colaborador != null) {
+        if (!isNull(colaborador) && !colaborador.getId().isEmpty()) {
             return ResponseEntity.ok(colaborador);
         }
 
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping(value = "/updateNome")
-    public ResponseEntity updateNome(@RequestBody String json) {
-        JSONObject jsonObj = new JSONObject(json);
+    @PutMapping
+    public ResponseEntity update(@RequestHeader HttpHeaders headers, @RequestBody @Valid ColaboradorUpdateDto colaboradorDto){
+        String id = Functions.getIdFromHeaders(headers);
 
-        if (!jsonObj.isEmpty() && jsonObj.has("id") && jsonObj.has("nome")) {
-            String id = jsonObj.getString("id");
-            String nome = jsonObj.getString("nome");
+        Colaborador colaborador = mapper.map(colaboradorDto, Colaborador.class);
 
-            if (!id.equals("") && Validator.checkNome(nome)) {
-                boolean serviceResponse = colaboradorService.updateNome(id, nome);
+        if(nonNull(colaborador)){
+            colaborador.setId(id);
 
-                if (serviceResponse) {
-                    return ResponseEntity.noContent().build();
-                }
+            if(colaboradorService.update(colaborador)){
+                return ResponseEntity.noContent().build();
             }
         }
 
-        return ResponseEntity.badRequest().build();
-    }
-
-    @PutMapping(value = "/updateEmail")
-    public ResponseEntity updateEmail(@RequestBody String json) {
-        JSONObject jsonObj = new JSONObject();
-
-        if (!jsonObj.isEmpty() && jsonObj.has("id") && jsonObj.has("email")) {
-
-            String id = jsonObj.getString("id");
-            String email = jsonObj.getString("email");
-
-            if (!id.equals("") && Validator.checkEmail(email)) {
-                boolean serviceResponse = colaboradorService.updateEmail(id, email);
-
-                if (serviceResponse) {
-                    return ResponseEntity.noContent().build();
-                }
-            }
-        }
-
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity delete(@PathVariable String id) {
+    public ResponseEntity delete(@RequestHeader HttpHeaders headers) {
 
-        if (!id.equals("") && colaboradorService.delete(id)) {
+        String id = Functions.getIdFromHeaders(headers);
+
+        if(colaboradorService.delete(id)){
             return ResponseEntity.noContent().build();
         }
 
         return ResponseEntity.notFound().build();
     }
-
 }

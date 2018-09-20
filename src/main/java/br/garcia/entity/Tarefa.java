@@ -3,10 +3,12 @@ package br.garcia.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sun.istack.internal.NotNull;
 import com.sun.xml.internal.ws.developer.Serialization;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -43,7 +45,6 @@ public class Tarefa {
 
     @ManyToOne
     @JoinColumn(name="colaborador_id")
-    @JsonIgnore
     private Colaborador colaborador;
 
     public String getId() {
