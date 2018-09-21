@@ -119,7 +119,7 @@ public class ColaboradorResource {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @PutMapping(value = "/updateSenha")
+    @PostMapping(value = "/updateSenha")
     public ResponseEntity updateSenha(@RequestHeader HttpHeaders headers, @RequestBody @Valid ColaboradorUpdateSenhaDto colaboradorDto) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         String id = Functions.getIdFromHeaders(headers);
         Colaborador colaborador = colaboradorService.getById(id);
@@ -127,7 +127,7 @@ public class ColaboradorResource {
         if(nonNull(colaborador)){
 
             if(colaborador.getSenha().equals(
-                    HashLibrary.passwordHash(colaboradorDto.getSenhaAntiga())
+                        HashLibrary.passwordHash(colaboradorDto.getSenhaAntiga())
             )){
 
                 colaborador.setSenha(colaboradorDto.getSenhaNova());
@@ -153,3 +153,4 @@ public class ColaboradorResource {
         return ResponseEntity.notFound().build();
     }
 }
+

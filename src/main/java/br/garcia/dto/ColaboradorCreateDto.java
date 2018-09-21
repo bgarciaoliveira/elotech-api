@@ -8,13 +8,13 @@ public class ColaboradorCreateDto {
     @NotEmpty
     @NotBlank
     @Size(min=11, max=11)
-    @Pattern(regexp="/^(([0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2})|([0-9]{11}))$/ \n")
     private String cpf;
 
     @NotNull
     @NotEmpty
     @NotBlank
     @Size(max=60)
+    @Email
     private String email;
 
     @NotNull

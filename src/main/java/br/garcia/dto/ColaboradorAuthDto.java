@@ -7,6 +7,7 @@ public class ColaboradorAuthDto {
     @NotEmpty
     @NotBlank
     @Size(max=60)
+    @Email
     private String email;
 
     @NotNull
