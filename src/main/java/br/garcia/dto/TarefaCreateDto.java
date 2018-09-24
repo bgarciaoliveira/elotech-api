@@ -1,6 +1,5 @@
 package br.garcia.dto;
 
-import com.sun.istack.internal.NotNull;
 
 import javax.validation.constraints.*;
 

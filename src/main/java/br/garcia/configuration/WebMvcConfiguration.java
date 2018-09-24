@@ -39,6 +39,8 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
 
                 String uri = new URI(httpServletRequest.getRequestURI()).normalize().toString();
 
+                System.out.println(uri);
+
                 //normalize uri
                 if(uri.charAt(uri.length() - 1) == '/'){
                     uri = uri.substring(0, uri.length() - 1);

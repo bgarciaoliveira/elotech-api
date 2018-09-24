@@ -49,8 +49,6 @@ public class TarefaResource {
 
             tarefa.setCodigo(codigo);
 
-            System.out.println(codigo);
-
             Tarefa serviceResponse = tarefaService.create(tarefa);
 
             if(nonNull(serviceResponse) && !serviceResponse.getId().isEmpty()){

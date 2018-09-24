@@ -1,19 +1,20 @@
 package br.garcia.dto;
 
-import javax.validation.constraints.*;
+
+import br.garcia.annotation.Cpf;
+import br.garcia.annotation.Email;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 public class ColaboradorCreateDto {
 
-    @NotNull
-    @NotEmpty
-    @NotBlank
-    @Size(min=11, max=11)
+    @Cpf
     private String cpf;
 
-    @NotNull
-    @NotEmpty
-    @NotBlank
-    @Size(max=60)
     @Email
     private String email;
 

@@ -2,6 +2,9 @@ package br.garcia.util;
 
 import org.springframework.http.HttpHeaders;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 public class Functions {
@@ -15,5 +18,12 @@ public class Functions {
         }
 
         return "";
+    }
+
+    public static String getApplicationRootPath() throws URISyntaxException {
+        URL u = Functions.class.getProtectionDomain().getCodeSource().getLocation();
+        File f = new File(u.toURI());
+
+        return f.getParentFile().getParent() + "/";
     }
 }

@@ -41,6 +41,4 @@ public class DatabaseConfiguration {
         emf.setJpaProperties(additionalProperties());
         return emf;
     }
-
-
 }

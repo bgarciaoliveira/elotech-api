@@ -1,12 +1,13 @@
 package br.garcia.dto;
 
-import javax.validation.constraints.*;
+
+import br.garcia.annotation.Email;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ColaboradorAuthDto {
-    @NotNull
-    @NotEmpty
-    @NotBlank
-    @Size(max=60)
     @Email
     private String email;
 
