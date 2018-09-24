@@ -1,10 +1,15 @@
 package br.garcia.entity;
 
+import br.garcia.annotation.Cpf;
+import br.garcia.annotation.Email;
 import br.garcia.util.HashLibrary;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
@@ -22,17 +27,10 @@ public class Colaborador {
     private String id;
 
     @Column(name = "cpf", unique=true)
-    @NotNull
-    @NotEmpty
-    @NotBlank
-    @Size(min=11, max=11)
+    @Cpf
     private String cpf;
 
     @Column(name = "email")
-    @NotNull
-    @NotEmpty
-    @NotBlank
-    @Size(max=60)
     @Email
     private String email;
 

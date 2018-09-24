@@ -27,7 +27,9 @@ public class CpfValidator implements ConstraintValidator<Cpf, String> {
 
         int d1;
         int d2;
-        int digito1, digito2, resto;
+        int digito1;
+        int digito2;
+        int resto;
         int digitoCPF;
         String nDigResult;
 
@@ -37,7 +39,7 @@ public class CpfValidator implements ConstraintValidator<Cpf, String> {
             digitoCPF = Integer.valueOf(cpf.substring(nCount - 1, nCount));
             d1 = d1 + (11 - nCount) * digitoCPF;
             d2 = d2 + (12 - nCount) * digitoCPF;
-        };
+        }
 
         resto = (d1 % 11);
         if (resto < 2)

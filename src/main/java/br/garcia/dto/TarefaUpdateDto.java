@@ -1,8 +1,6 @@
 package br.garcia.dto;
 
-import com.sun.istack.internal.NotNull;
 
-import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 public class TarefaUpdateDto {

@@ -3,6 +3,7 @@ package br.garcia.resource;
 import br.garcia.dto.TarefaCreateDto;
 import br.garcia.dto.TarefaUpdateDto;
 import br.garcia.entity.Tarefa;
+import br.garcia.entity.generator.IdGenerator;
 import br.garcia.service.TarefaService;
 import br.garcia.util.Functions;
 import org.json.JSONObject;
@@ -45,9 +46,7 @@ public class TarefaResource {
 
             tarefa.setColaboradorId(id);
 
-            long codigo = tarefaService.getLastCodigoByColaborador(id) + 1;
-
-            tarefa.setCodigo(codigo);
+            tarefa.setCodigo(new IdGenerator());
 
             Tarefa serviceResponse = tarefaService.create(tarefa);
 

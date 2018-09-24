@@ -9,6 +9,10 @@ import java.util.List;
 
 public class Functions {
 
+    private Functions() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static String getIdFromHeaders(HttpHeaders headers){
 
         List<String> idOccurrences = headers.get("id");

@@ -17,7 +17,7 @@ public class HashLibrary {
 
     public static String sha256(String text) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
-        byte digest[] = sha256Digest(text);
+        byte[] digest = sha256Digest(text);
 
         StringBuilder hexString = new StringBuilder();
         for (byte b : digest) {
@@ -30,7 +30,7 @@ public class HashLibrary {
 
         final byte xorValue = 3;
 
-        byte digest[] = sha256Digest(plainPass);
+        byte[] digest = sha256Digest(plainPass);
 
         for(int i = 0; i < digest.length; i++){
             digest[i] ^=xorValue;

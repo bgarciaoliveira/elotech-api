@@ -1,6 +1,5 @@
 package br.garcia.annotation.validator;
 
-import br.garcia.annotation.Cpf;
 import br.garcia.annotation.Email;
 
 import javax.validation.ConstraintValidator;

@@ -1,14 +1,8 @@
 package br.garcia.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.garcia.entity.generator.IdGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.sun.istack.internal.NotNull;
-import com.sun.xml.internal.ws.developer.Serialization;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -28,8 +22,8 @@ public class Tarefa {
     @NotBlank
     private String id;
 
-    @NotNull
-    private Long codigo;
+    @OneToOne(cascade = CascadeType.ALL)
+    private IdGenerator codigo;
 
     @Column(name = "titulo")
     @NotNull
@@ -63,14 +57,6 @@ public class Tarefa {
         this.id = id;
     }
 
-    public Long getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(Long codigo) {
-        this.codigo = codigo;
-    }
-
     public String getTitulo() {
         return titulo;
     }
@@ -101,5 +87,13 @@ public class Tarefa {
 
     public void setColaboradorId(String colaboradorId) {
         this.colaboradorId = colaboradorId;
+    }
+
+    public IdGenerator getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(IdGenerator codigo) {
+        this.codigo = codigo;
     }
 }

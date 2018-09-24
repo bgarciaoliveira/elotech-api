@@ -10,6 +10,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class Jwt {
 
+    private Jwt() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final String SECRET_KEY = Props.applicationProperties.getProperty("jwt_key");
 
     public static String create(String id){

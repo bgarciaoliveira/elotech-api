@@ -1,10 +1,8 @@
 package br.garcia.configuration;
 
 import br.garcia.util.Jwt;
-import com.sun.deploy.net.HttpUtils;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

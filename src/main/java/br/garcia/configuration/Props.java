@@ -9,7 +9,12 @@ import java.util.Properties;
 
 public class Props {
 
-    public static Properties applicationProperties = new Properties();
+    private Props() {
+        throw new IllegalStateException("Utility class");
+    }
+
+
+    public static final Properties applicationProperties = new Properties();
 
     public static void init() throws IOException, URISyntaxException {
 
