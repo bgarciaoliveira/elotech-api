@@ -18,8 +18,8 @@ public class DatabaseConfiguration {
                 .create()
                 .driverClassName("org.h2.Driver")
                 .url("jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE")
-                .username("sa")
-                .password("sa")
+                .username(Props.applicationProperties.getProperty("database_username"))
+                .password(Props.applicationProperties.getProperty("database_password"))
                 .build();
     }
 
