@@ -1,11 +1,13 @@
 package br.garcia.annotation.validator;
 
 import br.garcia.annotation.Cpf;
+import br.garcia.annotation.Email;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import static java.util.Objects.nonNull;
 
-public class EmailValidator implements ConstraintValidator<Cpf, String>{
+public class EmailValidator implements ConstraintValidator<Email, String>{
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
