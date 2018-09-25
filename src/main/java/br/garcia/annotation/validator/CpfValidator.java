@@ -15,7 +15,7 @@ public class CpfValidator implements ConstraintValidator<Cpf, String> {
 
     }
 
-    private boolean isCpf(String cpf) {
+    public boolean isCpf(String cpf) {
         cpf = cpf.replace(".", "");
         cpf = cpf.replace("-", "");
 
