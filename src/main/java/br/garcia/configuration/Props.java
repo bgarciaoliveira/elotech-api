@@ -13,7 +13,6 @@ public class Props {
         throw new IllegalStateException("Utility class");
     }
 
-
     public static final Properties applicationProperties = new Properties();
 
     public static void init() throws IOException, URISyntaxException {

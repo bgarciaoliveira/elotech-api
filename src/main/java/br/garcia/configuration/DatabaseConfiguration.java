@@ -14,10 +14,11 @@ public class DatabaseConfiguration {
 
     @Bean
     public DataSource dataSource() {
+
         return DataSourceBuilder
                 .create()
                 .driverClassName("org.postgresql.Driver")
-                .url("jdbc:postgres:database:" + Props.applicationProperties.getProperty("database_name") + ";")
+                .url("jdbc:postgresql://" + Props.applicationProperties.getProperty("database_host") + ":5432/" + Props.applicationProperties.getProperty("database_name"))
                 .username(Props.applicationProperties.getProperty("database_username"))
                 .password(Props.applicationProperties.getProperty("database_password"))
                 .build();
@@ -25,8 +26,8 @@ public class DatabaseConfiguration {
 
     public Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         properties.setProperty("hibernate.show_sql", "false");
         properties.setProperty("hibernate.format_sql", "true");
         return properties;

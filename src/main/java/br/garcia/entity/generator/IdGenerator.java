@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class IdGenerator {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long value;
 
     public Long getId() {
