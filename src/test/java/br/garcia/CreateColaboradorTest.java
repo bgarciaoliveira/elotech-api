@@ -47,4 +47,36 @@ public class CreateColaboradorTest {
 
         Assert.assertEquals(400, response.statusCode());
     }
+
+    @Test
+    public void tryCreateWithEmptyName(){
+        ColaboradorCreateDto colaborador = new ColaboradorCreateDto();
+        colaborador.setEmail("bruno@hotmail.com");
+        colaborador.setNome("");
+        colaborador.setSenha("bruno");
+        colaborador.setCpf("4125487965");
+
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body(colaborador)
+                .when().post("colaboradores/");
+
+        Assert.assertEquals(400, response.statusCode());
+    }
+
+    @Test
+    public void tryCreateWithEmptyPassword(){
+        ColaboradorCreateDto colaborador = new ColaboradorCreateDto();
+        colaborador.setEmail("bruno@hotmail.com");
+        colaborador.setNome("Bruno");
+        colaborador.setSenha("");
+        colaborador.setCpf("4125487965");
+
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body(colaborador)
+                .when().post("colaboradores/");
+
+        Assert.assertEquals(400, response.statusCode());
+    }
 }
