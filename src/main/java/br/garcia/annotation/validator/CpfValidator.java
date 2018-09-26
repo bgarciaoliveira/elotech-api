@@ -56,7 +56,7 @@ public class CpfValidator implements ConstraintValidator<Cpf, String> {
         else
             digito2 = 11 - resto;
 
-        String nDigVerific = cpf.substring(cpf.length() - 2, cpf.length());
+        String nDigVerific = cpf.substring(cpf.length() - 2);
 
         nDigResult = String.valueOf(digito1) + String.valueOf(digito2);
 
